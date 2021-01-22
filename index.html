@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>TaTeTi</title>
+  </head>
+  <body>
+    <h1 class="consigna">
+      Selecciona un cuadro y espera la respuesta para continuar jugando!
+    </h1>
+    <div class="container">
+      <div class="square num1"></div>
+      <div class="square num2"></div>
+      <div class="square num3"></div>
+      <div class="square num4"></div>
+      <div class="square num5"></div>
+      <div class="square num6"></div>
+      <div class="square num7"></div>
+      <div class="square num8"></div>
+      <div class="square num9"></div>
+    </div>
+    <button class="resetear" onclick="reset()">Reiniciar</button>
+  </body>
+
+  <script>
+    const squares = Array.from(document.querySelectorAll(".square"));
+    const container = document.querySelector(".container");
+
+    function selected() {
+      this.textContent = "X";
+      let restantes = squares.filter((square) => square.textContent == "");
+      randomSelect(restantes);
+    }
+
+    function randomSelect(squares) {
+      const idx = Math.floor(Math.random() * squares.length);
+      const square = squares[idx];
+      if (squares.includes("X")) {
+        randomSelect(squares);
+      } else {
+        setTimeout(() => (square.textContent = "O"), 750);
+      }
+    }
+
+    function reset() {
+      squares.forEach((square) => (square.textContent = ""));
+    }
+
+    squares.forEach((square) => square.addEventListener("click", selected));
+  </script>
+</html>
