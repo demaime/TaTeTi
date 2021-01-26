@@ -44,3 +44,7 @@ body {
 .resetear:hover {
   cursor: pointer;
 }
+
+.clicked {
+  background-color: pink;
+}

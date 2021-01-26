@@ -27,27 +27,152 @@
   <script>
     const squares = Array.from(document.querySelectorAll(".square"));
     const container = document.querySelector(".container");
+    const consigna = document.querySelector(".consigna");
+    let seTermino = false;
+    let seEstaEjecutando = false;
 
-    function selected() {
-      this.textContent = "X";
-      let restantes = squares.filter((square) => square.textContent == "");
-      randomSelect(restantes);
+    function onSelect(contexto) {
+      if (seTermino) return Promise.resolve();
+      if (contexto.textContent) return Promise.resolve();
+      contexto.textContent = "X";
+
+      seTermino = checkIsEndGame();
+      if (seTermino) return Promise.resolve();
+
+      return new Promise((resolve) => {
+        randomSelect().then(() => {
+          seTermino = checkIsEndGame();
+          resolve();
+        });
+      });
     }
 
-    function randomSelect(squares) {
-      const idx = Math.floor(Math.random() * squares.length);
-      const square = squares[idx];
-      if (squares.includes("X")) {
-        randomSelect(squares);
-      } else {
-        setTimeout(() => (square.textContent = "O"), 750);
+    function randomSelect() {
+      const vacios = squares.filter((square) => !square.textContent);
+      const idx = Math.floor(Math.random() * vacios.length);
+      const square = vacios[idx];
+
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          square.textContent = "O";
+          resolve();
+        }, 750);
+      });
+    }
+
+    function checkIsEndGame() {
+      if (
+        squares[0].textContent &&
+        squares[1].textContent &&
+        squares[2].textContent &&
+        squares[0].textContent == squares[1].textContent &&
+        squares[0].textContent == squares[2].textContent
+      ) {
+        squares[0].classList.add("clicked");
+        squares[1].classList.add("clicked");
+        squares[2].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[0].textContent != "" &&
+        (squares[0].textContent === squares[4].textContent) != "" &&
+        squares[0].textContent != "" &&
+        (squares[0].textContent === squares[8].textContent) != ""
+      ) {
+        squares[0].classList.add("clicked");
+        squares[4].classList.add("clicked");
+        squares[8].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[0].textContent != "" &&
+        (squares[0].textContent === squares[3].textContent) != "" &&
+        squares[0].textContent != "" &&
+        (squares[0].textContent === squares[6].textContent) != ""
+      ) {
+        squares[0].classList.add("clicked");
+        squares[3].classList.add("clicked");
+        squares[6].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[1].textContent != "" &&
+        (squares[1].textContent === squares[4].textContent) != "" &&
+        squares[1].textContent != "" &&
+        (squares[1].textContent === squares[7].textContent) != ""
+      ) {
+        squares[1].classList.add("clicked");
+        squares[4].classList.add("clicked");
+        squares[7].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[2].textContent != "" &&
+        (squares[2].textContent === squares[5].textContent) != "" &&
+        squares[2].textContent != "" &&
+        (squares[2].textContent === squares[8].textContent) != ""
+      ) {
+        squares[2].classList.add("clicked");
+        squares[5].classList.add("clicked");
+        squares[8].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[3].textContent != "" &&
+        (squares[3].textContent === squares[4].textContent) != "" &&
+        squares[3].textContent != "" &&
+        (squares[3].textContent === squares[5].textContent) != ""
+      ) {
+        squares[3].classList.add("clicked");
+        squares[4].classList.add("clicked");
+        squares[5].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[6].textContent != "" &&
+        (squares[6].textContent === squares[7].textContent) != "" &&
+        squares[6].textContent != "" &&
+        (squares[6].textContent === squares[8].textContent) != ""
+      ) {
+        squares[6].classList.add("clicked");
+        squares[7].classList.add("clicked");
+        squares[8].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
+      } else if (
+        squares[2].textContent != "" &&
+        (squares[2].textContent === squares[4].textContent) != "" &&
+        squares[2].textContent != "" &&
+        (squares[2].textContent === squares[6].textContent) != ""
+      ) {
+        squares[2].classList.add("clicked");
+        squares[4].classList.add("clicked");
+        squares[6].classList.add("clicked");
+        consigna.textContent = "¡JUEGO TERMINADO!";
+        return true;
       }
+      return false;
     }
 
     function reset() {
-      squares.forEach((square) => (square.textContent = ""));
+      seTermino = false;
+      squares.forEach(
+        (square) => (
+          (square.textContent = ""), square.classList.remove("clicked")
+        )
+      );
+      consigna.textContent =
+        "Selecciona un cuadro y espera la respuesta para continuar jugando!";
     }
 
-    squares.forEach((square) => square.addEventListener("click", selected));
+    squares.forEach((square) =>
+      square.addEventListener("click", function () {
+        if (seEstaEjecutando) return;
+        seEstaEjecutando = true;
+        onSelect(this).then(() => {
+          seEstaEjecutando = false;
+        });
+      })
+    );
   </script>
 </html>
